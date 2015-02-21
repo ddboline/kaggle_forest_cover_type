@@ -64,7 +64,7 @@ if __name__ == '__main__':
     xtrain = pca.transform(xtrain)
     xtest = pca.transform(xtest)
 
-    model = RandomForestRegressor(n_estimators=400)
+    model = RandomForestRegressor(n_estimators=400, n_jobs=-1)
     #model = RandomForestRegressor()
     print 'score', score_model(model, xtrain, ytrain)
     print model.feature_importances_
