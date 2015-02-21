@@ -10,6 +10,7 @@ import pandas as pd
 
 from sklearn import cross_validation
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.decomposition import PCA
 
 def load_data():
     train_df = pd.read_csv('train.csv')
@@ -56,6 +57,12 @@ def prepare_submission(model, xtrain, ytrain, xtest, ytest):
 
 if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
+
+    pca = PCA()
+    pca.fit(xtrain)
+    
+    xtrain = pca.transform(xtrain)
+    xtest = pca.transform(xtest)
 
     model = RandomForestRegressor(n_estimators=400)
     #model = RandomForestRegressor()
