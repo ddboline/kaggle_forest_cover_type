@@ -64,46 +64,15 @@ def load_data():
     test_df = pd.read_csv('test.csv')
     ssub_df = pd.read_csv('sampleSubmission.csv')
     
-    #for df in train_df, test_df, ssub_df:
-        #print df.shape
-        #print '\n%s' % '\n'.join(df.columns)
-    
-    #print train_df.describe()
-    
     #get_plots(train_df)
 
-    #train_df = make_hash(train_df)
-    #print train_df['Soil_Type_Hash'].describe()
-
-    #keep_cols = ['Id', 'Cover_Type'] + ['Soil_Type%d' % n for n in range(1,41)]
-    #drop_cols = [c for c in train_df.columns if c not in keep_cols]
+    xtrain = train_df.drop(labels=['Id','Cover_Type'], axis=1).values
+    ytrain = train_df['Cover_Type'].values
     
-    #train_df = train_df.drop(labels=drop_cols, axis=1)
-
-    #print help(train_df.Aspect.quantile)
-
-    #for c in train_df.columns:
-        #print train_df[c].dtype, c
-    
-    #cols_drop = [c for c in train_df.columns if 'Soil_Type' not in c]
-    #xtrain = train_df.drop(labels=cols_drop, axis=1)
-    #cols_drop = [c for c in test_df.columns if 'Soil_Type' not in c]
-    #xtest = test_df.drop(labels=cols_drop, axis=1)
-    
-    #xt = pd.concat([xtrain, xtest], axis=0)
-    
-    #print xtrain.shape, xtest.shape, xt.shape
-    
-    #model = BernoulliRBM(n_components=7)
-    #model.fit(xt.values)
-    #temp_train = model.transform(xtrain.values)
-    #temp_test = model.transform(xtest.values)
-
-    #print temp_train.shape, temp_test.shape
-
-    #for n in range(0,7):
-        #train_df['rbm_%d' % n] = temp_train[:,n]
-        #test_df['rbm_%d' % n] = temp_test[:,n]
+    model = KNeighborsClassifier(7)
+    model.fit(xtrain, ytrain)
+    train_df['knn'] = model.predict(xtrain)
+    test_df['knn'] = model.predict(xtest)
 
     xtrain = train_df.drop(labels=['Id','Cover_Type'], axis=1).values
     ytrain = train_df['Cover_Type'].values
