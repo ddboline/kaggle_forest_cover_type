@@ -92,10 +92,16 @@ def load_data():
     
     xt = pd.concat([xtrain, xtest], axis=0)
     
+    print xtrain.shape, xtest.shape, xt.shape
+    
     model = BernoulliRBM(n_components=7)
     model.fit(xt.values)
-    train_df['rbm'] = model.transform(xtrain.values)
-    test_df['rbm'] = model.transform(xtest.values)
+    temp_train = model.transform(xtrain.values)
+    temp_test = model.transform(xtest.values)
+
+    print temp_train.shape, temp_test.shape
+    
+    exit(0)
 
     xtrain = train_df.drop(labels=['Id','Cover_Type'], axis=1).values
     ytrain = train_df['Cover_Type'].values
