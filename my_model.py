@@ -85,25 +85,25 @@ def load_data():
     #for c in train_df.columns:
         #print train_df[c].dtype, c
     
-    cols_drop = [c for c in train_df.columns if 'Soil_Type' not in c]
-    xtrain = train_df.drop(labels=cols_drop, axis=1)
-    cols_drop = [c for c in test_df.columns if 'Soil_Type' not in c]
-    xtest = test_df.drop(labels=cols_drop, axis=1)
+    #cols_drop = [c for c in train_df.columns if 'Soil_Type' not in c]
+    #xtrain = train_df.drop(labels=cols_drop, axis=1)
+    #cols_drop = [c for c in test_df.columns if 'Soil_Type' not in c]
+    #xtest = test_df.drop(labels=cols_drop, axis=1)
     
-    xt = pd.concat([xtrain, xtest], axis=0)
+    #xt = pd.concat([xtrain, xtest], axis=0)
     
-    print xtrain.shape, xtest.shape, xt.shape
+    #print xtrain.shape, xtest.shape, xt.shape
     
-    model = BernoulliRBM(n_components=7)
-    model.fit(xt.values)
-    temp_train = model.transform(xtrain.values)
-    temp_test = model.transform(xtest.values)
+    #model = BernoulliRBM(n_components=7)
+    #model.fit(xt.values)
+    #temp_train = model.transform(xtrain.values)
+    #temp_test = model.transform(xtest.values)
 
-    print temp_train.shape, temp_test.shape
+    #print temp_train.shape, temp_test.shape
 
-    for n in range(0,7):
-        train_df['rbm_%d' % n] = temp_train[:,n]
-        test_df['rbm_%d' % n] = temp_test[:,n]
+    #for n in range(0,7):
+        #train_df['rbm_%d' % n] = temp_train[:,n]
+        #test_df['rbm_%d' % n] = temp_test[:,n]
 
     xtrain = train_df.drop(labels=['Id','Cover_Type'], axis=1).values
     ytrain = train_df['Cover_Type'].values
