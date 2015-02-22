@@ -100,8 +100,10 @@ def load_data():
     temp_test = model.transform(xtest.values)
 
     print temp_train.shape, temp_test.shape
-    
-    exit(0)
+
+    for n in range(0,7):
+        train_df['rbm_%d' % n] = temp_train[:,n]
+        test_df['rbm_%d' % n] = temp_test[:,n]
 
     xtrain = train_df.drop(labels=['Id','Cover_Type'], axis=1).values
     ytrain = train_df['Cover_Type'].values
