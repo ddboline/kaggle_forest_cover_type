@@ -96,7 +96,6 @@ def load_data():
     model.fit(xt.values)
     train_df['rbm'] = model.transform(xtrain.values)
     test_df['rbm'] = model.transform(xtest.values)
-    del xtrain, xtest
 
     xtrain = train_df.drop(labels=['Id','Cover_Type'], axis=1).values
     ytrain = train_df['Cover_Type'].values
