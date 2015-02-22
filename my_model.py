@@ -68,6 +68,7 @@ def load_data():
 
     xtrain = train_df.drop(labels=['Id','Cover_Type'], axis=1).values
     ytrain = train_df['Cover_Type'].values
+    xtest = test_df.drop(labels=['Id'], axis=1).values
     
     model = KNeighborsClassifier(7)
     model.fit(xtrain, ytrain)
