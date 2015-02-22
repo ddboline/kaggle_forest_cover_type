@@ -94,8 +94,8 @@ def load_data():
     
     model = BernoulliRBM(n_components=7)
     model.fit(xt.values)
-    train_df['rbm'] = model.predict(xtrain.values)
-    test_df['rbm'] = model.predict(xtest.values)
+    train_df['rbm'] = model.transform(xtrain.values)
+    test_df['rbm'] = model.transform(xtest.values)
     del xtrain, xtest
 
     xtrain = train_df.drop(labels=['Id','Cover_Type'], axis=1).values
