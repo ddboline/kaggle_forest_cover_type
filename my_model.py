@@ -124,8 +124,7 @@ if __name__ == '__main__':
     #model = GradientBoostingClassifier()
     #model = KNeighborsClassifier(7)
     
-    model = Pipeline([('pca', PCA()),
-                      ('knn', MiniBatchKMeans(7)),
+    model = Pipeline([('knn', MiniBatchKMeans(7)),
                       ('rf', GradientBoostingClassifier()),])
     
     print 'score', score_model(model, xtrain, ytrain)
