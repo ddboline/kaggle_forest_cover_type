@@ -17,6 +17,8 @@ from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.neural_network import BernoulliRBM
 
+from sklearn.pipeline import Pipeline
+
 from sklearn.metrics import accuracy_score
 
 def gaussian(x, mu, sig):
@@ -117,8 +119,13 @@ if __name__ == '__main__':
 
     #model = RandomForestRegressor(n_jobs=-1)
     #model = RandomForestClassifier(n_estimators=400)
-    model = GradientBoostingClassifier()
+    #model = GradientBoostingClassifier()
     #model = KNeighborsClassifier(7)
+    
+    model = Pipeline([('pca', PCA()),
+                      ('knn', KNeighborsClassifier(7)),
+                      ('rf', RandomForestClassifier(n_estimators=400)),])
+    
     print 'score', score_model(model, xtrain, ytrain)
     #print model.feature_importances_
     prepare_submission(model, xtrain, ytrain, xtest, ytest)
