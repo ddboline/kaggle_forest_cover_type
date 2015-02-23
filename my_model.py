@@ -125,7 +125,7 @@ if __name__ == '__main__':
     #model = KNeighborsClassifier(7)
     
     model = Pipeline([('pca', PCA()),
-                      ('knn', KMeans(7)),
+                      ('knn', MiniBatchKMeans(7)),
                       ('rf', RandomForestClassifier(n_estimators=400)),])
     
     print 'score', score_model(model, xtrain, ytrain)
