@@ -126,7 +126,7 @@ if __name__ == '__main__':
     
     model = Pipeline([('pca', PCA()),
                       ('knn', MiniBatchKMeans(7)),
-                      ('rf', RandomForestClassifier(n_estimators=400)),])
+                      ('rf', GradientBoostingClassifier()),])
     
     print 'score', score_model(model, xtrain, ytrain)
     #print model.feature_importances_
