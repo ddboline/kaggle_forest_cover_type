@@ -10,6 +10,7 @@ import pandas as pd
 
 from sklearn import cross_validation
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.decomposition import PCA
 from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
@@ -66,14 +67,14 @@ def load_data():
     
     #get_plots(train_df)
 
-    xtrain = train_df.drop(labels=['Id','Cover_Type'], axis=1).values
-    ytrain = train_df['Cover_Type'].values
-    xtest = test_df.drop(labels=['Id'], axis=1).values
+    #xtrain = train_df.drop(labels=['Id','Cover_Type'], axis=1).values
+    #ytrain = train_df['Cover_Type'].values
+    #xtest = test_df.drop(labels=['Id'], axis=1).values
     
-    model = KNeighborsClassifier(7)
-    model.fit(xtrain, ytrain)
-    train_df['knn'] = model.predict(xtrain)
-    test_df['knn'] = model.predict(xtest)
+    #model = KNeighborsClassifier(7)
+    #model.fit(xtrain, ytrain)
+    #train_df['knn'] = model.predict(xtrain)
+    #test_df['knn'] = model.predict(xtest)
 
     xtrain = train_df.drop(labels=['Id','Cover_Type'], axis=1).values
     ytrain = train_df['Cover_Type'].values
@@ -115,7 +116,8 @@ if __name__ == '__main__':
     #xtest = pca.transform(xtest)
 
     #model = RandomForestRegressor(n_jobs=-1)
-    model = RandomForestClassifier(n_estimators=400)
+    #model = RandomForestClassifier(n_estimators=400)
+    model = GradientBoostingClassifier()
     #model = KNeighborsClassifier(7)
     print 'score', score_model(model, xtrain, ytrain)
     print model.feature_importances_
