@@ -12,7 +12,7 @@ from sklearn import cross_validation
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.naive_bayes import GaussianNB
-from sklearn.decomposition import PCA, FastICA
+from sklearn.decomposition import PCA, FastICA, KernelPCA
 from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.neural_network import BernoulliRBM
@@ -124,7 +124,7 @@ if __name__ == '__main__':
     #model = GradientBoostingClassifier()
     #model = KNeighborsClassifier(7)
     
-    model = Pipeline([('ica', FastICA()),
+    model = Pipeline([('kpca', KernelPCA()),
                       ('rf', RandomForestClassifier()),])
     
     print 'score', score_model(model, xtrain, ytrain)
