@@ -120,5 +120,5 @@ if __name__ == '__main__':
     model = GradientBoostingClassifier()
     #model = KNeighborsClassifier(7)
     print 'score', score_model(model, xtrain, ytrain)
-    print model.feature_importances_
+    #print model.feature_importances_
     prepare_submission(model, xtrain, ytrain, xtest, ytest)
