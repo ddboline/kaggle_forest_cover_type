@@ -19,6 +19,8 @@ from sklearn.neural_network import BernoulliRBM
 
 from sklearn.pipeline import Pipeline
 
+from sklearn.externals import joblib
+
 from sklearn.metrics import accuracy_score
 
 def gaussian(x, mu, sig):
@@ -123,7 +125,7 @@ if __name__ == '__main__':
     #model = KNeighborsClassifier(7)
     
     model = Pipeline([('pca', PCA()),
-                      ('knn', KNeighborsClassifier(7)),
+                      ('knn', KMeans(7)),
                       ('rf', RandomForestClassifier(n_estimators=400)),])
     
     print 'score', score_model(model, xtrain, ytrain)
