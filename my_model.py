@@ -9,13 +9,20 @@ import numpy as np
 import pandas as pd
 
 from sklearn import cross_validation
+
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
+
 from sklearn.naive_bayes import GaussianNB
-from sklearn.decomposition import PCA, FastICA, KernelPCA
+
 from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.neural_network import BernoulliRBM
+
+from sklearn.svm import LinearSVC, SVC
+from sklearn.linear_model import SGDClassifier
+
+from sklearn.decomposition import PCA, FastICA, KernelPCA
 
 from sklearn.pipeline import Pipeline
 
@@ -124,8 +131,10 @@ if __name__ == '__main__':
     #model = GradientBoostingClassifier()
     #model = KNeighborsClassifier(7)
     
-    model = Pipeline([('kpca', KernelPCA()),
-                      ('rf', RandomForestClassifier()),])
+    #model = Pipeline([('kpca', KernelPCA(n_components=7)),
+                      #('rf', RandomForestClassifier(n_estimators=400)),])
+    
+    model = SVC()
     
     print 'score', score_model(model, xtrain, ytrain)
     #print model.feature_importances_
