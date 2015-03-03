@@ -157,7 +157,7 @@ def load_data():
 def train_individual(xtrain, ytrain, xtest):
     ytrain_pred = np.zeros(ytrain.shape)
     ytest_pred = np.zeros((xtest.shape[0],ytrain.shape[1]))
-    model = RandomForestClassifier()
+    model = RandomForestClassifier(n_jobs=-1)
     for n in range(7):
         model.fit(xtrain, ytrain[:,n])
         ytrain_pred[:,n] = model.predict(xtrain)
@@ -223,7 +223,7 @@ if __name__ == '__main__':
     #xtest = pca.transform(xtest)
 
     #model = RandomForestRegressor(n_jobs=-1)
-    model = RandomForestClassifier(n_estimators=400)
+    model = RandomForestClassifier(n_estimators=400, n_jobs=-1)
     #model = DecisionTreeClassifier()
     #model = GradientBoostingClassifier()
     #model = KNeighborsClassifier(7)
