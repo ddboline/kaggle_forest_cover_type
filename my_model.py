@@ -155,14 +155,11 @@ def load_data():
     return xtrain, ytrain, xtest, ytest
 
 def train_individual(xtrain, ytrain, xtest):
-    ytrain_pred = np.zeros(ytrain.shape)
-    ytest_pred = np.zeros((xtest.shape[0],ytrain.shape[1]))
-    model = RandomForestClassifier(n_jobs=-1)
-    for n in range(7):
-        model.fit(xtrain, ytrain[:,n])
-        ytrain_pred[:,n] = model.predict(xtrain)
-        ytest_pred[:,n] = model.predict(xtest)
-        print 'done %d' % n
+    #ytrain_pred = np.zeros(ytrain.shape[0])
+    #ytest_pred = np.zeros((xtest.shape[0],ytrain.shape[1]))
+    model = MiniBatchKMeans(n_clusters=7, n_jobs=-1)
+    ytrain_pred = model.fit_predict(xtrain)
+    ytest_pred = model.predict(xtest)
     return np.hstack([xtrain, ytrain_pred]), np.hstack([xtest, ytest_pred])
 
 def score_model(model, xtrain, ytrain):
