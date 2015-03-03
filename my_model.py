@@ -157,7 +157,7 @@ def load_data():
 def train_individual(xtrain, ytrain, xtest):
     #ytrain_pred = np.zeros(ytrain.shape[0])
     #ytest_pred = np.zeros((xtest.shape[0],ytrain.shape[1]))
-    model = MiniBatchKMeans(n_clusters=7, n_jobs=-1)
+    model = MiniBatchKMeans(n_clusters=7)
     ytrain_pred = model.fit_predict(xtrain)
     ytest_pred = model.predict(xtest)
     return np.hstack([xtrain, ytrain_pred]), np.hstack([xtest, ytest_pred])
