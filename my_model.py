@@ -157,10 +157,18 @@ def load_data():
 def train_individual(xtrain, ytrain, xtest):
     #ytrain_pred = np.zeros(ytrain.shape[0])
     #ytest_pred = np.zeros((xtest.shape[0],ytrain.shape[1]))
-    model = MiniBatchKMeans(n_clusters=7)
-    ytest_pred = model.fit_predict(xtest)
-    ytrain_pred = model.predict(xtrain)
-    return np.hstack([xtrain, ytrain_pred.reshape(xtrain.shape[0],1)]), np.hstack([xtest, ytest_pred.reshape(xtest.shape[0],1)])
+    #model = MiniBatchKMeans(n_clusters=7)
+    #ytest_pred = model.fit_predict(xtest)
+    #ytrain_pred = model.predict(xtrain)
+    #return np.hstack([xtrain, ytrain_pred.reshape(xtrain.shape[0],1)]), np.hstack([xtest, ytest_pred.reshape(xtest.shape[0],1)])
+    
+    pca = PCA(n_components=7, copy=True, whiten=True)
+
+    xtest = pca.fit_transform(xtest)
+    xtrain = pca.transform(xtrain)
+    
+
+    return xtrain, xtest
 
 def score_model(model, xtrain, ytrain):
     randint = reduce(lambda x,y: x|y, [ord(x)<<(n*8) for (n,x) in enumerate(os.urandom(4))])
@@ -212,12 +220,6 @@ def prepare_submission(model, xtrain, ytrain, xtest, ytest):
 
 if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
-
-    #pca = PCA()
-    #pca.fit(xtrain)
-    
-    #xtrain = pca.transform(xtrain)
-    #xtest = pca.transform(xtest)
 
     #model = RandomForestRegressor(n_jobs=-1)
     model = RandomForestClassifier(n_estimators=400, n_jobs=-1)
