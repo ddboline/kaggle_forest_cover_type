@@ -160,7 +160,7 @@ def train_individual(xtrain, ytrain, xtest):
     model = MiniBatchKMeans(n_clusters=7)
     ytrain_pred = model.fit_predict(xtrain)
     ytest_pred = model.predict(xtest)
-    return np.hstack([xtrain, ytrain_pred]), np.hstack([xtest, ytest_pred])
+    return np.hstack([xtrain, ytrain_pred.reshape(xtrain.shape[0],1)]), np.hstack([xtest, ytest_pred.reshape(xtest.shape[0],1)])
 
 def score_model(model, xtrain, ytrain):
     randint = reduce(lambda x,y: x|y, [ord(x)<<(n*8) for (n,x) in enumerate(os.urandom(4))])
