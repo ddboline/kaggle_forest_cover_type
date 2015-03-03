@@ -162,7 +162,7 @@ def train_individual(xtrain, ytrain, xtest):
     #ytrain_pred = model.predict(xtrain)
     #return np.hstack([xtrain, ytrain_pred.reshape(xtrain.shape[0],1)]), np.hstack([xtest, ytest_pred.reshape(xtest.shape[0],1)])
     
-    pca = PCA(whiten=True)
+    pca = ProbabilisticPCA(whiten=True)
 
     xtest = pca.fit_transform(xtest)
     xtrain = pca.transform(xtrain)
