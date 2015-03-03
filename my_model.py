@@ -158,8 +158,8 @@ def train_individual(xtrain, ytrain, xtest):
     #ytrain_pred = np.zeros(ytrain.shape[0])
     #ytest_pred = np.zeros((xtest.shape[0],ytrain.shape[1]))
     model = MiniBatchKMeans(n_clusters=7)
-    ytrain_pred = model.fit_predict(xtrain)
-    ytest_pred = model.predict(xtest)
+    ytest_pred = model.fit_predict(xtest)
+    ytrain_pred = model.predict(xtrain)
     return np.hstack([xtrain, ytrain_pred.reshape(xtrain.shape[0],1)]), np.hstack([xtest, ytest_pred.reshape(xtest.shape[0],1)])
 
 def score_model(model, xtrain, ytrain):
