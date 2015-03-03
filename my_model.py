@@ -23,7 +23,7 @@ from sklearn.neural_network import BernoulliRBM
 from sklearn.svm import LinearSVC, SVC
 from sklearn.linear_model import SGDClassifier
 
-from sklearn.decomposition import PCA, FastICA, KernelPCA
+from sklearn.decomposition import PCA, FastICA, KernelPCA, ProbabilisticPCA
 
 from sklearn.pipeline import Pipeline
 
