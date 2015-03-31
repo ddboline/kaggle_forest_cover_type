@@ -126,9 +126,10 @@ def scorer(estimator, X, y):
 
 def train_model_parallel(model, xtrain, ytrain, index):
     randint = reduce(lambda x,y: x|y, [ord(x)<<(n*8) for (n,x) in enumerate(os.urandom(4))])
-    xTrain, xTest, yTrain, yTest = \
-      cross_validation.train_test_split(xtrain, ytrain[:,index], test_size=0.4,
-                                        random_state=randint)
+    #xTrain, xTest, yTrain, yTest = \
+      #cross_validation.train_test_split(xtrain, ytrain[:,index], test_size=0.4,
+                                        #random_state=randint)
+    xTrain, yTrain = xtrain, ytrain
     n_est = [10, 100, 200]
     m_dep = [5, 10, 40]
 
@@ -139,10 +140,10 @@ def train_model_parallel(model, xtrain, ytrain, index):
     model.fit(xTrain, yTrain)
     print model
 
-    ytest_pred = model.predict(xTest)
-    ytest_prob = model.predict_proba(xTest)
-    print 'accuracy', accuracy_score(ytest_pred,yTest)
-    print 'logloss', log_loss(yTest, ytest_prob)
+    #ytest_pred = model.predict(xTest)
+    #ytest_prob = model.predict_proba(xTest)
+    #print 'accuracy', accuracy_score(ytest_pred,yTest)
+    #print 'logloss', log_loss(yTest, ytest_prob)
     with gzip.open('model_%d.pkl.gz' % index, 'wb') as mfile:
         pickle.dump(model, mfile, protocol=2)
     return
