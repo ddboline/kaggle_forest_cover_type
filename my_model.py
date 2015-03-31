@@ -129,7 +129,7 @@ def train_model_parallel(model, xtrain, ytrain, index):
     #xTrain, xTest, yTrain, yTest = \
       #cross_validation.train_test_split(xtrain, ytrain[:,index], test_size=0.4,
                                         #random_state=randint)
-    xTrain, yTrain = xtrain, ytrain
+    xTrain, yTrain = xtrain, ytrain[:,index]
     n_est = [10, 100, 200]
     m_dep = [5, 10, 40]
 
