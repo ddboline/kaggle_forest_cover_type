@@ -5,6 +5,6 @@ scp ddboline@ddbolineathome.mooo.com:/home/ddboline/setup_files/build/backup_kag
 tar zxvf forest_cover_type.tar.gz
 rm forest_cover_type.tar.gz
 
-./my_model.py
+./my_model.py $1
 
 ssh ddboline@ddbolineathome.mooo.com "~/bin/send_to_gtalk FOREST_COVER_DONE"
