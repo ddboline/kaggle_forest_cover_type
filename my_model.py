@@ -152,7 +152,7 @@ def test_model_parallel(xtrain, ytrain):
     xTrain, xTest, yTrain, yTest = \
       cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
                                         random_state=randint)
-    ytest_prob = np.zeros((yTest.shape[0], yTest.shape[1], 2))
+    ytest_prob = np.zeros((yTest.shape[0], 7, 2))
     for n in range(7):
         with gzip.open('model_%d.pkl.gz' % n, 'rb') as mfile:
             model = pickle.load(mfile)
@@ -160,17 +160,19 @@ def test_model_parallel(xtrain, ytrain):
             print 'best score', model.best_score_
             print 'best params', model.best_params_
             ytest_prob[:,n,:] = model.predict_proba(xTest)
-    ytest = transform_from_classes(yTest)
-    ytest_pred = transform_to_class(ytest_prob).astype(np.int64)
+    ytest = transform_to_class(yTest).astype(np.int64)
+    ytest_pred = transform_to_class(ytest_prob[:,:,1]).astype(np.int64)
+    print ytest.shape, ytest_pred.shape
     print accuracy_score(ytest, ytest_pred)
 
 def prepare_submission_parallel(xtrain, ytrain, xtest, ytest):
-    ytest_prob = np.zeros((ytest.shape[0], ytest.shape[1], 2))
+    print ytest.shape
+    ytest_prob = np.zeros((ytest.shape[0], 7, 2))
     for n in range(7):
         with gzip.open('model_%d.pkl.gz' % n, 'rb') as mfile:
             model = pickle.load(mfile)
-            ytest_prob = model.predict_proba(xtest)
-    ytest2 = transform_to_class(ytest_prob).astype(np.int64)
+            ytest_prob[:,n,:] = model.predict_proba(xtest)
+    ytest2 = transform_to_class(ytest_prob[:,:,1]).astype(np.int64)
     
     df = pd.DataFrame({'Id': ytest, 'Cover_Type': ytest2}, columns=('Id', 'Cover_Type'))
     df.to_csv('submission.csv', index=False)
@@ -208,4 +210,4 @@ if __name__ == '__main__':
     elif index == 7:
         test_model_parallel(xtrain, ytrain)
     elif index == 8:
-        prepare_submission_parallel(model, xtrain, ytrain, xtest, ytest)
+        prepare_submission_parallel(xtrain, ytrain, xtest, ytest)
