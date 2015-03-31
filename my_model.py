@@ -130,13 +130,13 @@ def train_model_parallel(model, xtrain, ytrain, index):
       #cross_validation.train_test_split(xtrain, ytrain[:,index], test_size=0.4,
                                         #random_state=randint)
     xTrain, yTrain = xtrain, ytrain[:,index]
-    n_est = [10, 100, 200]
-    m_dep = [5, 10, 40]
+    #n_est = [10, 100, 200]
+    #m_dep = [5, 10, 40]
 
-    model = GridSearchCV(estimator=model,
-                                param_grid=dict(n_estimators=n_est, max_depth=m_dep),
-                                scoring=scorer,
-                                n_jobs=-1, verbose=1)
+    #model = GridSearchCV(estimator=model,
+                                #param_grid=dict(n_estimators=n_est, max_depth=m_dep),
+                                #scoring=scorer,
+                                #n_jobs=-1, verbose=1)
     model.fit(xTrain, yTrain)
     print model
 
@@ -157,10 +157,11 @@ def test_model_parallel(xtrain, ytrain):
     for n in range(7):
         with gzip.open('model_%d.pkl.gz' % n, 'rb') as mfile:
             model = pickle.load(mfile)
-            print 'grid scores', model.grid_scores_
-            print 'best score', model.best_score_
-            print 'best params', model.best_params_
+            #print 'grid scores', model.grid_scores_
+            #print 'best score', model.best_score_
+            #print 'best params', model.best_params_
             ytest_prob[:,n,:] = model.predict_proba(xTest)
+    #print accuracy_score
     ytest = transform_to_class(yTest).astype(np.int64)
     ytest_pred = transform_to_class(ytest_prob[:,:,1]).astype(np.int64)
     print ytest.shape, ytest_pred.shape
@@ -195,9 +196,9 @@ if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
 
     #model = RandomForestRegressor(n_jobs=-1)
-    #model = RandomForestClassifier(n_estimators=400, n_jobs=-1)
+    model = RandomForestClassifier(n_estimators=400, n_jobs=-1)
     #model = DecisionTreeClassifier()
-    model = GradientBoostingClassifier(loss='deviance', verbose=1)
+    #model = GradientBoostingClassifier(loss='deviance', verbose=1)
 
     index = -1
     for arg in os.sys.argv:
@@ -206,7 +207,11 @@ if __name__ == '__main__':
             break
         except ValueError:
             continue
-    if index >= 0 and index < 7:
+    if index == -1:
+        for idx in range(7):
+            train_model_parallel(model, xtrain, ytrain, idx)
+        prepare_submission_parallel(xtrain, ytrain, xtest, ytest)
+    elif index >= 0 and index < 7:
         train_model_parallel(model, xtrain, ytrain, index)
     elif index == 7:
         test_model_parallel(xtrain, ytrain)
