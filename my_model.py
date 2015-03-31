@@ -7,22 +7,17 @@ matplotlib.use('Agg')
 import pylab as pl
 import numpy as np
 import pandas as pd
+import gzip
+import cPickle as pickle
 
 from sklearn import cross_validation
 
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier, AdaBoostClassifier
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.tree import DecisionTreeClassifier
 
-from sklearn.naive_bayes import GaussianNB
+from sklearn.grid_search import GridSearchCV
 
-from sklearn.grid_search import RandomizedSearchCV, GridSearchCV
-
-from sklearn.neighbors import KNeighborsClassifier, NearestNeighbors
-from sklearn.cluster import MiniBatchKMeans
-from sklearn.neural_network import BernoulliRBM
-
-from sklearn.svm import LinearSVC, SVC
 from sklearn.linear_model import SGDClassifier
 
 from sklearn.decomposition import PCA, FastICA, KernelPCA, ProbabilisticPCA
@@ -31,7 +26,7 @@ from sklearn.pipeline import Pipeline
 
 from sklearn.externals import joblib
 
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, log_loss
 
 def gaussian(x, mu, sig):
     return np.exp(-(x-mu)**2/(2*sig**2))/(sig*np.sqrt(2*np.pi))
@@ -113,38 +108,7 @@ def load_data():
 
     #get_plots(train_df)
 
-    #xtrain = train_df.drop(labels=['Id','Cover_Type'], axis=1).values
-    #ytrain = train_df['Cover_Type'].values
-    #xtest = test_df.drop(labels=['Id'], axis=1).values
-
-    #model = KNeighborsClassifier(7)
-    #model.fit(xtrain, ytrain)
-    #train_df['knn'] = model.predict(xtrain)
-    #test_df['knn'] = model.predict(xtest)
-
-    #labels_to_drop = []
-                      #'Soil_Type5', 'Soil_Type7', 'Soil_Type8', 'Soil_Type9',
-                      #'Soil_Type15', 'Soil_Type19', 'Soil_Type21',
-                      #'Soil_Type25', 'Soil_Type26', 'Soil_Type27',
-                      #'Soil_Type28', 'Soil_Type34', 'Soil_Type36',
-                      #]
-    labels_to_drop = [
-        #u'Elevation',
-        #u'Aspect',
-        #u'Slope',
-        #u'Horizontal_Distance_To_Hydrology',
-        #u'Vertical_Distance_To_Hydrology',
-        #u'Horizontal_Distance_To_Roadways',
-        #u'Hillshade_9am',
-        #u'Hillshade_Noon',
-        #u'Hillshade_3pm',
-        #u'Horizontal_Distance_To_Fire_Points',
-        #u'Wilderness_Area1',
-        #u'Wilderness_Area2',
-        #u'Wilderness_Area3',
-        #u'Wilderness_Area4',
-        #u'Soil_Type1', u'Soil_Type2', u'Soil_Type3', u'Soil_Type4', u'Soil_Type5', u'Soil_Type6', u'Soil_Type7', u'Soil_Type8', u'Soil_Type9', u'Soil_Type10', u'Soil_Type11', u'Soil_Type12', u'Soil_Type13', u'Soil_Type14', u'Soil_Type15', u'Soil_Type16', u'Soil_Type17', u'Soil_Type18', u'Soil_Type19', u'Soil_Type20', u'Soil_Type21', u'Soil_Type22', u'Soil_Type23', u'Soil_Type24', u'Soil_Type25', u'Soil_Type26', u'Soil_Type27', u'Soil_Type28', u'Soil_Type29', u'Soil_Type30', u'Soil_Type31', u'Soil_Type32', u'Soil_Type33', u'Soil_Type34', u'Soil_Type35', u'Soil_Type36', u'Soil_Type37', u'Soil_Type38', u'Soil_Type39', u'Soil_Type40'
-       ]
+    labels_to_drop = []
 
     xtrain = train_df.drop(labels=['Id','Cover_Type']+labels_to_drop, axis=1).values
     ytrain = transform_from_classes(train_df['Cover_Type'].values)
@@ -160,64 +124,88 @@ def scorer(estimator, X, y):
     ypred = estimator.predict(X)
     return accuracy_score(ypred, y)
 
-#def train_model_parallel(model, xtrain, ytrain, index):
-    #randint = reduce(lambda x,y: x|y, [ord(x)<<(n*8) for (n,x) in enumerate(os.urandom(4))])
-    #xTrain, xTest, yTrain, yTest = \
-      #cross_validation.train_test_split(xtrain, ytrain[:,index], test_size=0.4,
-                                        #random_state=randint)
-    #n_est = [10, 100, 200]
-    #m_dep = [5, 10, 40]
-
-    #model = GridSearchCV(estimator=model,
-                                #param_grid=dict(n_estimators=n_est, max_depth=m_dep),
-                                #scoring=scorer,
-                                #n_jobs=-1, verbose=1)
-    #model.fit(xTrain, yTrain)
-    #print model
-
-    #ytest_pred = model.predict(xTest)
-    #ytest_prob = model.predict_proba(xTest)
-    #print 'accuracy', accuracy_score(ytest_pred,yTest)
-    #print 'logloss', log_loss(yTest, ytest_prob)
-    #with gzip.open('model_%d.pkl.gz' % index, 'wb') as mfile:
-        #pickle.dump(model, mfile, protocol=2)
-    #return
-
-def score_model(model, xtrain, ytrain, index=0):
+def train_model_parallel(model, xtrain, ytrain, index):
     randint = reduce(lambda x,y: x|y, [ord(x)<<(n*8) for (n,x) in enumerate(os.urandom(4))])
-    xTrain, xTest, yTrain, yTest = cross_validation.train_test_split(xtrain,
-                                                                     ytrain[:,index],
-                                                                     test_size=0.4, random_state=randint)
+    xTrain, xTest, yTrain, yTest = \
+      cross_validation.train_test_split(xtrain, ytrain[:,index], test_size=0.4,
+                                        random_state=randint)
+    n_est = [10, 100, 200]
+    m_dep = [5, 10, 40]
+
+    model = GridSearchCV(estimator=model,
+                                param_grid=dict(n_estimators=n_est, max_depth=m_dep),
+                                scoring=scorer,
+                                n_jobs=-1, verbose=1)
     model.fit(xTrain, yTrain)
+    print model
+
     ytest_pred = model.predict(xTest)
     ytest_prob = model.predict_proba(xTest)
-
     print 'accuracy', accuracy_score(ytest_pred,yTest)
-    print 'pred', ytest_pred
-    print 'proba', ytest_prob[:,1]
-
+    print 'logloss', log_loss(yTest, ytest_prob)
+    with gzip.open('model_%d.pkl.gz' % index, 'wb') as mfile:
+        pickle.dump(model, mfile, protocol=2)
     return
 
-def prepare_submission(model, xtrain, ytrain, xtest, ytest):
-    model.fit(xtrain, ytrain)
-    ytest2 = transform_to_class(model.predict(xtest).astype(np.int64))
-    #dateobj = map(datetime.datetime.fromtimestamp, ytest)
+def test_model_parallel(xtrain, ytrain):
+    randint = reduce(lambda x,y: x|y, [ord(x)<<(n*8) for (n,x) in enumerate(os.urandom(4))])
+    xTrain, xTest, yTrain, yTest = \
+      cross_validation.train_test_split(xtrain, ytrain, test_size=0.4,
+                                        random_state=randint)
+    ytest_prob = np.zeros((yTest.shape[0], yTest.shape[1], 2))
+    for n in range(7):
+        with gzip.open('model_%d.pkl.gz' % n, 'rb') as mfile:
+            model = pickle.load(mfile)
+            print 'grid scores', model.grid_scores_
+            print 'best score', model.best_score_
+            print 'best params', model.best_params_
+            ytest_prob[:,n,:] = model.predict_proba(xTest)
+    ytest = transform_from_classes(yTest)
+    ytest_pred = transform_to_class(ytest_prob).astype(np.int64)
+    print accuracy_score(ytest, ytest_pred)
 
+def prepare_submission_parallel(xtrain, ytrain, xtest, ytest):
+    ytest_prob = np.zeros((ytest.shape[0], ytest.shape[1], 2))
+    for n in range(7):
+        with gzip.open('model_%d.pkl.gz' % n, 'rb') as mfile:
+            model = pickle.load(mfile)
+            ytest_prob = model.predict_proba(xtest)
+    ytest2 = transform_to_class(ytest_prob).astype(np.int64)
+    
     df = pd.DataFrame({'Id': ytest, 'Cover_Type': ytest2}, columns=('Id', 'Cover_Type'))
     df.to_csv('submission.csv', index=False)
 
     return
+
+#def prepare_submission(model, xtrain, ytrain, xtest, ytest):
+    #model.fit(xtrain, ytrain)
+    #ytest2 = transform_to_class(model.predict(xtest).astype(np.int64))
+    ##dateobj = map(datetime.datetime.fromtimestamp, ytest)
+
+    #df = pd.DataFrame({'Id': ytest, 'Cover_Type': ytest2}, columns=('Id', 'Cover_Type'))
+    #df.to_csv('submission.csv', index=False)
+
+    #return
 
 
 if __name__ == '__main__':
     xtrain, ytrain, xtest, ytest = load_data()
 
     #model = RandomForestRegressor(n_jobs=-1)
-    model = RandomForestClassifier(n_estimators=400, n_jobs=-1)
+    #model = RandomForestClassifier(n_estimators=400, n_jobs=-1)
     #model = DecisionTreeClassifier()
-    #model = GradientBoostingClassifier(loss='deviance', verbose=1)
+    model = GradientBoostingClassifier(loss='deviance', verbose=1)
 
-    train_model_parallel(model, xtrain, ytrain, 0)
-    #print 'score', score_model(model, xtrain, ytrain)
-    #print model.feature_importances_
-    #prepare_submission(model, xtrain, ytrain, xtest, ytest)
+    index = -1
+    for arg in os.sys.argv:
+        try:
+            index = int(arg)
+            break
+        except ValueError:
+            continue
+    if index >= 0 and index < 7:
+        train_model_parallel(model, xtrain, ytrain, index)
+    elif index == 7:
+        test_model_parallel(xtrain, ytrain)
+    elif index == 8:
+        prepare_submission_parallel(model, xtrain, ytrain, xtest, ytest)
