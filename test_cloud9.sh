@@ -7,4 +7,4 @@ rm forest_cover_type.tar.gz
 
 ./my_model.py $1
 
-ssh ddboline@ddbolineathome.mooo.com "~/bin/send_to_gtalk FOREST_COVER_DONE"
+ssh ddboline@ddbolineathome.mooo.com "~/bin/send_to_gtalk FOREST_COVER_DONE_$1"
